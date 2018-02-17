@@ -1,0 +1,13 @@
+{
+  "presets": [
+    ["es2015", { "modules": false }]
+  ],
+  "plugins": [
+    "vue-jsx-hot-reload",
+    "syntax-dynamic-import",
+    "jsx-event-modifiers",
+    "jsx-v-model",
+    "transform-vue-jsx"
+  ],
+  "comments": false
+}
