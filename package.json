@@ -1,0 +1,26 @@
+{
+  "name": "vue-universal-slider",
+  "version": "1.0.0",
+  "description": "Universal slider for Vue.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "init": "curl -u 'vuNemesis' https://api.github.com/user/repos -d '{\"name\":\"vue-universal-slider\"}'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vuNemesis/vue-universal-slider.git"
+  },
+  "keywords": [
+    "vue.js",
+    "vue-component",
+    "slider",
+    "javascript"
+  ],
+  "author": "vuNemesis <vuNemesis@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vuNemesis/vue-universal-slider/issues"
+  },
+  "homepage": "https://github.com/vuNemesis/vue-universal-slider#readme"
+}
