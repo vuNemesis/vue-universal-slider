@@ -1,13 +1,21 @@
 {
   "presets": [
-    ["es2015", { "modules": false }]
+    ["es2015", {
+      "targets": {
+        "browsers": ["last 2 versions", "safari >= 7"]
+      },
+    "modules": false
+    }]
   ],
   "plugins": [
-    "vue-jsx-hot-reload",
     "syntax-dynamic-import",
     "jsx-event-modifiers",
     "jsx-v-model",
     "transform-vue-jsx"
   ],
-  "comments": false
+   "env": {
+    "development": {
+      "plugins": ["vue-jsx-hot-reload"]
+    }
+  }
 }
