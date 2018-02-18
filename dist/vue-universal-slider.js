@@ -138,232 +138,9 @@ var Component$4 = {
   }
 };
 
-var asyncGenerator = function () {
-  function AwaitValue(value) {
-    this.value = value;
-  }
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-  function AsyncGenerator(gen) {
-    var front, back;
-
-    function send(key, arg) {
-      return new Promise(function (resolve, reject) {
-        var request = {
-          key: key,
-          arg: arg,
-          resolve: resolve,
-          reject: reject,
-          next: null
-        };
-
-        if (back) {
-          back = back.next = request;
-        } else {
-          front = back = request;
-          resume(key, arg);
-        }
-      });
-    }
-
-    function resume(key, arg) {
-      try {
-        var result = gen[key](arg);
-        var value = result.value;
-
-        if (value instanceof AwaitValue) {
-          Promise.resolve(value.value).then(function (arg) {
-            resume("next", arg);
-          }, function (arg) {
-            resume("throw", arg);
-          });
-        } else {
-          settle(result.done ? "return" : "normal", result.value);
-        }
-      } catch (err) {
-        settle("throw", err);
-      }
-    }
-
-    function settle(type, value) {
-      switch (type) {
-        case "return":
-          front.resolve({
-            value: value,
-            done: true
-          });
-          break;
-
-        case "throw":
-          front.reject(value);
-          break;
-
-        default:
-          front.resolve({
-            value: value,
-            done: false
-          });
-          break;
-      }
-
-      front = front.next;
-
-      if (front) {
-        resume(front.key, front.arg);
-      } else {
-        back = null;
-      }
-    }
-
-    this._invoke = send;
-
-    if (typeof gen.return !== "function") {
-      this.return = undefined;
-    }
-  }
-
-  if (typeof Symbol === "function" && Symbol.asyncIterator) {
-    AsyncGenerator.prototype[Symbol.asyncIterator] = function () {
-      return this;
-    };
-  }
-
-  AsyncGenerator.prototype.next = function (arg) {
-    return this._invoke("next", arg);
-  };
-
-  AsyncGenerator.prototype.throw = function (arg) {
-    return this._invoke("throw", arg);
-  };
-
-  AsyncGenerator.prototype.return = function (arg) {
-    return this._invoke("return", arg);
-  };
-
-  return {
-    wrap: function (fn) {
-      return function () {
-        return new AsyncGenerator(fn.apply(this, arguments));
-      };
-    },
-    await: function (value) {
-      return new AwaitValue(value);
-    }
-  };
-}();
-
-
-
-
-
-
-
-
-
-
-
-
-
-var defineProperty = function (obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-};
-
-var get = function get(object, property, receiver) {
-  if (object === null) object = Function.prototype;
-  var desc = Object.getOwnPropertyDescriptor(object, property);
-
-  if (desc === undefined) {
-    var parent = Object.getPrototypeOf(object);
-
-    if (parent === null) {
-      return undefined;
-    } else {
-      return get(parent, property, receiver);
-    }
-  } else if ("value" in desc) {
-    return desc.value;
-  } else {
-    var getter = desc.get;
-
-    if (getter === undefined) {
-      return undefined;
-    }
-
-    return getter.call(receiver);
-  }
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var set = function set(object, property, value, receiver) {
-  var desc = Object.getOwnPropertyDescriptor(object, property);
-
-  if (desc === undefined) {
-    var parent = Object.getPrototypeOf(object);
-
-    if (parent !== null) {
-      set(parent, property, value, receiver);
-    }
-  } else if ("value" in desc && desc.writable) {
-    desc.value = value;
-  } else {
-    var setter = desc.set;
-
-    if (setter !== undefined) {
-      setter.call(receiver, value);
-    }
-  }
-
-  return value;
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var toConsumableArray = function (arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
-
-    return arr2;
-  } else {
-    return Array.from(arr);
-  }
-};
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 var Component = {
   name: 'ui-slider',
@@ -416,7 +193,7 @@ var Component = {
       });
       this.countItems = this.itemsData.length;
     } else {
-      this.itemsData = [].concat(toConsumableArray(this.items.map(function (item) {
+      this.itemsData = [].concat(_toConsumableArray(this.items.map(function (item) {
         return item;
       })));
       this.countItems = this.itemsData.length;
@@ -445,7 +222,7 @@ var Component = {
     handleLeft: function handleLeft() {
       var _this2 = this;
 
-      var next = [].concat(toConsumableArray(this.elements)).reverse().find(function (ref) {
+      var next = [].concat(_toConsumableArray(this.elements)).reverse().find(function (ref) {
         return ref.offsetLeft + ref.clientWidth / 2 <= Math.abs(_this2.left);
       });
       var x = next ? Math.abs(next.offsetLeft + this.left) : null;
@@ -537,13 +314,13 @@ var Component = {
 
     var progress = !this.progressVisible ? null : this.isLoading ? null : h(
       'div',
-      defineProperty({ 'class': 'slider-progress' }, 'class', ['slider-progress', this.progressTop && 'top', this.progressBottom && 'bottom']),
+      _defineProperty({ 'class': 'slider-progress' }, 'class', ['slider-progress', this.progressTop && 'top', this.progressBottom && 'bottom']),
       [h('div', babelHelperVueJsxMergeProps$1([{ 'class': 'slider-progress-bar' }, this.styleProgress]))]
     );
 
     var leftButton = h(
       'div',
-      babelHelperVueJsxMergeProps$1([defineProperty({ 'class': 'slider-button'
+      babelHelperVueJsxMergeProps$1([_defineProperty({ 'class': 'slider-button'
       }, 'class', ['slider-button', this.buttonsPosition === 'bottom' ? 'slider-button-bottom-left' : this.buttonsPosition === 'top' ? 'slider-button-top-left' : 'slider-button-left', !this.isLoading && this.visibleLeftButton && 'visible']), {
         on: {
           'click': function click($event) {
@@ -560,7 +337,7 @@ var Component = {
 
     var rightButton = h(
       'div',
-      babelHelperVueJsxMergeProps$1([defineProperty({ 'class': 'slider-button'
+      babelHelperVueJsxMergeProps$1([_defineProperty({ 'class': 'slider-button'
       }, 'class', ['slider-button', this.buttonsPosition === 'bottom' ? 'slider-button-bottom-right' : this.buttonsPosition === 'top' ? 'slider-button-top-right' : 'slider-button-right', !this.isLoading && this.visibleRightButton && 'visible']), {
         on: {
           'click': function click($event) {

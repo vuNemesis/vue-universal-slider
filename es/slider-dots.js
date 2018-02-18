@@ -14,7 +14,7 @@ var Component = {
       'div',
       { 'class': 'slider-dots' },
       [this.slider.elements.map(function (item, index) {
-        return item.offsetLeft + _this.slider.left + item.clientWidth / 3 >= 0 && item.offsetLeft < _this.slider.sliderWidth - _this.slider.left ? h('span', { 'class': 'dot red' }) : h('span', _mergeJSXProps([{ 'class': 'dot' }, {
+        return item.offsetLeft + _this.slider.left + item.clientWidth / 3 >= 0 && item.offsetLeft + item.clientWidth - item.clientWidth / 3 <= _this.slider.sliderWidth + Math.abs(_this.slider.left) ? h('span', { 'class': 'dot red' }) : h('span', _mergeJSXProps([{ 'class': 'dot' }, {
           on: {
             'click': function click($event) {
               for (var _len = arguments.length, attrs = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -25,7 +25,6 @@ var Component = {
             }
           }
         }]));
-        // : <a class="ui grey empty circular label" onClick={this.sliderRoot.handleCircular.bind(this, index)}/>
       })]
     );
   }
