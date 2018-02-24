@@ -1,11 +1,11 @@
-import Slider from "./slider.jsx";
-import SliderItem from "./slider-item.jsx";
+import Slider from "./slider.js";
+import SliderItem from "./slider-item.js";
 
 var VueUniversalSlider = {};
 
 VueUniversalSlider.install = function (Vue) {
-  Vue.component("ui-slider", Slider);
-  Vue.component("ui-slider-item", SliderItem);
+  Vue.component("vu-slider", Slider);
+  Vue.component("vu-slider-item", SliderItem);
 };
 
 VueUniversalSlider.Slider = Slider;

@@ -1,151 +1,181 @@
-.ui {
-  &.slider {
-    line-height: 1;
-    position: relative;
+.vu-slider {
+  line-height: 1;
+  position: relative;
 
-    .slider-spinner {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+  &__progress {
+    margin: 3px 0;
+    &_padding {
+      margin-left: 50px;
+      margin-right: 50px;
     }
-
-    .slider-progress {
-      position: absolute;
+    &-bar {
+      transition: all 2s;
+      background-color: lightgrey;
       height: 3px;
-      width: 100%;
-      &-bar {
-        transition: all 2s;
-        background-color: lightgrey;
-        height: 3px;
-        position: relative;
-      }
-      &.top {
-        top: -6px;
-      }
-      &.bottom {
-        bottom: -6px;
-      }
-    }
-
-    .slider-dots {
-      width: 100%;
-      text-align: center;
-      padding: 10px 0;
-      .dot {
-        display: inline-block;
-        margin: 0px 3px;
-        width: 10px;
-        height: 10px;
-        border-radius: 5px;
-        background-color: lightgrey;
-        cursor: pointer;
-        &.red {
-          cursor: inherit;
-          background-color: grey;
-        }
-      }
-    }
-
-    .slider-content {
-      overflow: hidden;
-      line-height: 1;
-      width: 100%;
-      height: 100%;
       position: relative;
-      .slider-items {
-        // opacity: 1;
-        position: absolute;
-        transition: all 2s;
-        display: flex;
+    }
+  }
+
+  &__dots {
+    width: 100%;
+    text-align: center;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    &_padding {
+      padding-left: 50px;
+      padding-right: 50px;
+    }
+  }
+
+  &__dot {
+    transition: all 0.5s;
+    display: inline-block;
+    margin: 0px 3px;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: lightgrey;
+    cursor: pointer;
+    &_active {
+      cursor: inherit;
+      background-color: grey;
+    }
+  }
+
+  &__content {
+    overflow: hidden;
+    line-height: 1;
+    margin: auto;
+    // height: 100%;
+    position: relative;
+    &-wrapper {
+      position: relative;
+      height: 100%;
+      overflow: hidden;
+    }
+    &-items {
+      // opacity: 1;
+      position: absolute;
+      // transition: all 2s;
+      // transition: none;
+      display: flex;
+      &_hide {
+        opacity: 0;
+      }
+    }
+
+    &-item {
+      user-select: none; 
+      line-height: 1;
+      img {
+        max-width: initial;
+        width: auto;
+        opacity: 1;
+        transition: opacity 0.3s;
         &.hide {
           opacity: 0;
-        }
-        .slider-item {
-          user-select: none; 
-          line-height: 1;
-          img {
-            width: auto;
-            opacity: 1;
-            transition: opacity 0.3s;
-            &.hide {
-              opacity: 0;
-            }
-          }
-        }
-      }
-     
-    }
-
-    .slider-button {
-      z-index: 1;
-      &.visible:hover {
-        cursor: pointer;
-        // opacity: 0.8;
-        // background-color: rgba(0,0,0, 0.6);
-      }
-      background-color: rgba(0,0,0, 0.8);
-      opacity: 0;
-      color: white;
-      height: 100%;
-      width: 50px;
-      font-size: 3em;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: absolute;
-      &-left {
-        left: 0;
-      }
-      &-right {
-        right: 0;
-      }
-      &-bottom-left {
-        left: 0;
-        bottom: 0px;
-        height: 50px;
-        width: 50%;
-      }
-      &-bottom-right {
-        right: 0;
-        bottom: 0px;
-        height: 50px;
-        width: 50%;
-      }
-      &-top-left {
-        left: 0;
-        top: 0px;
-        height: 50px;
-        width: 50%;
-      }
-      &-top-right {
-        right: 0;
-        top: 0px;
-        height: 50px;
-        width: 50%;
-      }
-    }
-
-    &:hover {
-      .slider-button {
-        &.visible {
-          opacity: 0.8;
         }
       }
     }
   }
+
+  &__button {
+    z-index: 1;
+    transition: all 0.5s;
+    opacity: 0;
+    color: white;
+    height: 100%;
+    width: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    
+    &_visible {
+      opacity: 0.8;
+    }
+
+    &:not(&_disabled):hover, &:not(&_disabled):focus {
+      .arrow polyline {
+        stroke-width: 3;
+      }
+    }
+    
+    &_visible:not(&_disabled):hover {
+      cursor: pointer;
+    }
+
+    &_outside {
+      background: none;
+      opacity: 0.8;
+    }
+    &_left {
+      left: 0;
+    }
+    &_right {
+      right: 0;
+    }
+    &_bottom-left {
+      left: 0;
+      bottom: 0px;
+      height: 50px;
+      width: 50%;
+    }
+    &_bottom-right {
+      right: 0;
+      bottom: 0px;
+      height: 50px;
+      width: 50%;
+    }
+    &_top-left {
+      left: 0;
+      top: 0px;
+      height: 50px;
+      width: 50%;
+    }
+    &_top-right {
+      right: 0;
+      top: 0px;
+      height: 50px;
+      width: 50%;
+    }
+  }
+
+  // &:hover &__button {
+  //   &_visible {
+  //     opacity: 0.8;
+  //   }
+  // }
+  &__spinner {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
 }
+
+svg {
+  padding: 5px;
+}
+
+.arrow {
+  // cursor: pointer;
+  polyline {
+    transition: all 250ms ease-in-out;
+  }
+}
+
 
 .fade-enter-active, .fade-leave-active {
   transition: opacity 1.5s;
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
+.fade-enter, .fade-leave-to {
   opacity: 0;
 }
-
-[v-cloak] { display: none }
 
 // .spinner {
 //   width: 40px;

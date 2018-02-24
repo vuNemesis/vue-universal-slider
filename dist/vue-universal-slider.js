@@ -6,7 +6,7 @@
 
 var nestRE = /^(attrs|props|on|nativeOn|class|style|hook)$/
 
-var babelHelperVueJsxMergeProps$1 = function mergeJSXProps (objs) {
+var babelHelperVueJsxMergeProps = function mergeJSXProps (objs) {
   return objs.reduce(function (a, b) {
     var aa, bb, key, nestedKey, temp
     for (key in b) {
@@ -55,7 +55,70 @@ function mergeFn (a, b) {
   }
 }
 
-var Component$3 = {
+var Component = {
+  name: 'ui-slider-item-image',
+  props: {
+    item: String,
+    height: Number,
+    index: Number
+  },
+  data: function data() {
+    return {
+      loaded: true
+    };
+  },
+
+  computed: {
+    styleItemImage: function styleItemImage() {
+      return {
+        style: {
+          height: this.height + 'px'
+        }
+      };
+    },
+    classesImage: function classesImage() {
+      return {
+        class: [
+          // this.loaded && 'hide'
+        ]
+      };
+    }
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    this.$refs.image.onload = function () {
+      // this.loaded = false
+      // this.$nextTick(() => {
+      _this.sliderRoot.addItem(_this.$el, _this.index);
+      // })
+    };
+    // console.log('mounted:', this.index)
+    // let img = new Image();
+    // img.onload = () => {
+    //     this.loaded = true
+    //     this.$nextTick(() => {
+    //       this.sliderRoot.addItem(this.$el, this.index)
+    //     })
+    // };
+    // img.src = this.item
+  },
+
+  inject: {
+    sliderRoot: { default: null }
+  },
+  render: function render(h) {
+    return h(
+      'div',
+      { 'class': 'slider-item' },
+      [h('img', babelHelperVueJsxMergeProps([{
+        attrs: { src: this.item }
+      }, this.styleItemImage, this.classesImage, { ref: 'image' }]))]
+    );
+  }
+};
+
+var SliderItem = {
   name: 'ui-slider-item',
   props: {
     item: String,
@@ -72,9 +135,8 @@ var Component$3 = {
   computed: {
     styleItemImage: function styleItemImage() {
       return {
-        style: {
-          height: this.height + 'px'
-        }
+        height: this.height + 'px'
+        // width: this.sliderRoot.width + 'px'
       };
     }
   },
@@ -97,53 +159,33 @@ var Component$3 = {
   },
   render: function render(h) {
     var img = this.scopedFunc && this.scopedFunc({ item: this.item });
-    return h(
-      'div',
-      { 'class': 'slider-item', ref: 'item' },
-      [img && img, !img && h('img', babelHelperVueJsxMergeProps$1([{
-        attrs: { src: this.item }
-      }, this.styleItemImage, this.classesImage, { ref: 'image' }]))]
-    );
+    return h('div', { class: 'vu-slider__content-item', ref: 'item' }, [img && h(img), !img && h('img', { attrs: { src: this.item }, style: this.styleItemImage, ref: 'image' })]);
   }
 };
 
-var Component$4 = {
+var SliderDots = {
   name: 'ui-slider-dots',
-  inject: ['sliderRoot'],
-  data: function data() {
-    return {
-      slider: this.sliderRoot
-    };
+  functional: true,
+  inject: {
+    sliderRoot: { default: null }
   },
-  render: function render(h) {
+  render: function render(h, _ref) {
     var _this = this;
 
-    return h(
-      'div',
-      { 'class': 'slider-dots' },
-      [this.slider.elements.map(function (item, index) {
-        return item.offsetLeft + _this.slider.left + item.clientWidth / 3 >= 0 && item.offsetLeft + item.clientWidth - item.clientWidth / 3 <= _this.slider.sliderWidth + Math.abs(_this.slider.left) ? h('span', { 'class': 'dot red' }) : h('span', babelHelperVueJsxMergeProps$1([{ 'class': 'dot' }, {
-          on: {
-            'click': function click($event) {
-              for (var _len = arguments.length, attrs = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-                attrs[_key - 1] = arguments[_key];
-              }
+    var injections = _ref.injections;
+    var sliderRoot = injections.sliderRoot;
 
-              _this.slider.handleDot.bind(_this, index).apply(undefined, [$event].concat(attrs));
-            }
-          }
-        }]));
-      })]
-    );
+    return h('div', { class: 'vu-slider__dots', style: sliderRoot.styleDots }, [sliderRoot.elements.map(function (item, index) {
+      return item.offsetLeft + sliderRoot.left + item.clientWidth / 3 >= 0 && item.offsetLeft + item.clientWidth - item.clientWidth / 3 <= sliderRoot.sliderWidth + Math.abs(sliderRoot.left) ? h('span', { class: 'vu-slider__dot vu-slider__dot_active' }) : h('span', { class: 'vu-slider__dot', on: { click: sliderRoot.handleDot.bind(_this, index) } });
+    })]);
   }
 };
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-var Component = {
+var Slider = {
   name: 'ui-slider',
+  components: { SliderDots: SliderDots, SliderItem: SliderItem, SliderItemImage: Component },
   props: {
     items: Array,
     height: {
@@ -154,21 +196,32 @@ var Component = {
       type: [Number, String],
       default: '100%'
     },
-    buttonsPosition: {
-      type: String,
-      default: ''
-    },
     buttonsOutside: Boolean,
     wheel: Boolean,
-    dots: Boolean,
-    progressTop: Boolean,
-    progressBottom: Boolean
+    dots: {
+      type: String,
+      default: '',
+      validator: function validator(val) {
+        return !val || val.match(/^(top|bottom)$/);
+      }
+    },
+    dotsInside: {
+      type: Boolean,
+      default: false
+    },
+    progress: {
+      type: String,
+      default: '',
+      validator: function validator(val) {
+        return !val || val.match(/^(top|bottom)$/);
+      }
+    }
   },
   data: function data() {
     return {
-      countElements: 0,
+      countItems: 0,
+      itemsData: [],
       elements: [],
-      itemsData: null,
       cols: 7,
       step: 1,
       left: 0,
@@ -183,7 +236,7 @@ var Component = {
       sliderRoot: this
     };
   },
-  created: function created() {
+  mounted: function mounted() {
     // if(this.$vnode.data.scopedSlots && this.$vnode.data.scopedSlots.default) console.dir(this.$vnode.data.scopedSlots.default({image: 'test'}))
     if (!this.items && this.$slots.default) {
       this.itemsData = this.$slots.default.filter(function (item) {
@@ -256,8 +309,8 @@ var Component = {
     }
   },
   computed: {
-    progressVisible: function progressVisible() {
-      return this.progressTop || this.progressBottom;
+    widthSlider: function widthSlider() {
+      return typeof this.width === 'number' ? this.width + 'px' : this.width;
     },
     progressPercent: function progressPercent() {
       return Math.round((this.sliderWidth + Math.abs(this.left)) * 100 / this.itemsWidth);
@@ -268,31 +321,32 @@ var Component = {
     visibleRightButton: function visibleRightButton() {
       return Math.abs(this.left) + this.sliderWidth < this.itemsWidth;
     },
-    styleSlider: function styleSlider() {
-      var height = (this.buttonsPosition === 'bottom' || this.buttonsPosition === 'top') && this.buttonsOutside && (this.nextLeft || this.nextRight) ? this.height + 50 : this.height;
-      return {
-        style: {
-          height: height + 'px',
-          width: typeof this.width === 'number' ? this.width + 'px' : this.width,
-          paddingBottom: this.buttonsPosition === 'bottom' && this.buttonsOutside && (this.nextLeft || this.nextRight) ? '50px' : 0,
-          paddingTop: this.buttonsPosition === 'top' && this.buttonsOutside && (this.nextLeft || this.nextRight) ? '50px' : 0,
-          paddingLeft: !this.buttonsPosition && this.buttonsOutside ? '50px' : 0,
-          paddingRight: !this.buttonsPosition && this.buttonsOutside ? '50px' : 0
-        }
-      };
-    },
     styleContent: function styleContent() {
       return {
-        style: {
-          left: this.left + 'px'
-        }
+        height: this.height + 'px',
+        width: this.widthSlider
+      };
+    },
+    styleContentItems: function styleContentItems() {
+      return {
+        left: this.left + 'px'
+      };
+    },
+    styleContentWrapper: function styleContentWrapper() {
+      return {
+        margin: this.buttonsOutside ? '0 50px' : null
       };
     },
     styleProgress: function styleProgress() {
       return {
-        style: {
-          width: this.progressPercent + '%'
-        }
+        width: this.progressPercent + '%'
+      };
+    },
+    styleDots: function styleDots() {
+      return {
+        position: this.dotsInside ? 'absolute' : 'relative',
+        top: this.dots === 'top' ? 0 : null,
+        bottom: this.dots === 'bottom' ? 0 : null
       };
     }
   },
@@ -302,107 +356,84 @@ var Component = {
     // const directives = [
     //   { name: 'my-dir', value: 123, modifiers: { abc: true } }
     // ]
-    var items = void 0;
     var scopedFunc = this.$vnode.data.scopedSlots && this.$vnode.data.scopedSlots.default;
-    items = this.itemsData.map(function (item, index) {
-      return h(Component$3, {
-        attrs: { item: item, height: _this4.height, index: index, 'scoped-func': scopedFunc },
-        key: index });
+    var items = this.itemsData.map(function (item, index) {
+      return h(SliderItem, {
+        props: {
+          item: item,
+          height: _this4.height,
+          index: index,
+          scopedFunc: scopedFunc
+        },
+        key: index
+      });
     });
 
-    var dots = !this.dots ? null : this.isLoading ? null : h(Component$4, null);
+    var dots = !this.dots || this.isLoading ? null : h(SliderDots);
 
-    var progress = !this.progressVisible ? null : this.isLoading ? null : h(
-      'div',
-      _defineProperty({ 'class': 'slider-progress' }, 'class', ['slider-progress', this.progressTop && 'top', this.progressBottom && 'bottom']),
-      [h('div', babelHelperVueJsxMergeProps$1([{ 'class': 'slider-progress-bar' }, this.styleProgress]))]
-    );
+    var progress = !this.progress || this.isLoading ? null : this.progress === 'top' || this.progress === 'bottom' ? h('div', { class: ['vu-slider__progress'] }, [h('div', { class: "vu-slider__progress-bar", style: this.styleProgress })]) : null;
 
-    var leftButton = h(
-      'div',
-      babelHelperVueJsxMergeProps$1([_defineProperty({ 'class': 'slider-button'
-      }, 'class', ['slider-button', this.buttonsPosition === 'bottom' ? 'slider-button-bottom-left' : this.buttonsPosition === 'top' ? 'slider-button-top-left' : 'slider-button-left', !this.isLoading && this.visibleLeftButton && 'visible']), {
-        on: {
-          'click': function click($event) {
-            for (var _len = arguments.length, attrs = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-              attrs[_key - 1] = arguments[_key];
-            }
+    var leftArrowIcon = h('svg', {
+      attrs: {
+        width: '16px',
+        height: '30px',
+        viewBox: '0 0 16 30',
+        xmlSpace: 'preserve'
+      }
+    }, [h('polyline', {
+      attrs: {
+        points: '16,30 0,15 16,0'
+      },
+      style: {
+        fill: 'none',
+        stroke: !this.buttonsOutside ? '#FFFFFF' : this.visibleLeftButton ? '#000000' : 'lightgrey',
+        strokeWidth: '2',
+        strokeLinecap: 'round',
+        strokeLinejoin: 'round'
+      }
+    })]);
 
-            _this4.handleLeft.apply(_this4, [$event].concat(attrs));
-          }
-        }
-      }]),
-      ['\u2039']
-    );
+    var rightArrowIcon = h('svg', {
+      attrs: {
+        width: '16px',
+        height: '30px',
+        viewBox: '0 0 16 30',
+        xmlSpace: 'preserve'
+      }
+    }, [h('polyline', {
+      attrs: {
+        points: '0,30 16,15 0,0'
+      },
+      style: {
+        fill: 'none',
+        stroke: !this.buttonsOutside ? '#FFFFFF' : this.visibleRightButton ? '#000000' : 'lightgrey',
+        strokeWidth: '2',
+        strokeLinecap: 'round',
+        strokeLinejoin: 'round'
+      }
+    })]);
 
-    var rightButton = h(
-      'div',
-      babelHelperVueJsxMergeProps$1([_defineProperty({ 'class': 'slider-button'
-      }, 'class', ['slider-button', this.buttonsPosition === 'bottom' ? 'slider-button-bottom-right' : this.buttonsPosition === 'top' ? 'slider-button-top-right' : 'slider-button-right', !this.isLoading && this.visibleRightButton && 'visible']), {
-        on: {
-          'click': function click($event) {
-            for (var _len2 = arguments.length, attrs = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-              attrs[_key2 - 1] = arguments[_key2];
-            }
+    var leftButton = h('div', { class: ['vu-slider__button', 'vu-slider__button_left', this.buttonsOutside && 'vu-slider__button_outside', !this.visibleLeftButton && 'vu-slider__button_disabled', !this.isLoading && this.visibleLeftButton && 'vu-slider__button_visible'], on: { click: this.handleLeft } }, [h('div', { class: "arrow left" }, [leftArrowIcon])]);
 
-            _this4.handleRight.apply(_this4, [$event].concat(attrs));
-          }
-        }
-      }]),
-      ['\u203A']
-    );
+    var rightButton = h('div', { class: ['vu-slider__button', 'vu-slider__button_right', this.buttonsOutside && 'vu-slider__button_outside', !this.visibleRightButton && 'vu-slider__button_disabled', !this.isLoading && this.visibleRightButton && 'vu-slider__button_visible'], on: { click: this.handleRight } }, [h('div', { class: "arrow left" }, [rightArrowIcon])]);
 
-    return h(
-      'div',
-      null,
-      [h(
-        'div',
-        babelHelperVueJsxMergeProps$1([{ 'class': 'ui slider' }, this.styleSlider, {
-          on: {
-            'wheel': function wheel($event) {
-              for (var _len3 = arguments.length, attrs = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-                attrs[_key3 - 1] = arguments[_key3];
-              }
+    var content = h('div', { class: "vu-slider__content", style: this.styleContent }, [leftButton, rightButton, (this.dots === 'top' || this.dots === 'bottom') && this.dotsInside && dots, h('div', { class: 'vu-slider__content-wrapper', style: this.styleContentWrapper, ref: "slider" }, [h('div', { class: "vu-slider__content-items", style: this.styleContentItems }, [items])])]);
 
-              _this4.handleScroll.apply(_this4, [$event].concat(attrs));
-            }
-          }
-        }]),
-        [h(
-          'transition',
-          {
-            attrs: { name: 'fade' }
-          },
-          [progress]
-        ), leftButton, rightButton, h(
-          'div',
-          { 'class': 'slider-content', ref: 'slider' },
-          [h(
-            'div',
-            babelHelperVueJsxMergeProps$1([{ 'class': 'slider-items' }, this.styleContent]),
-            [items]
-          )]
-        ), h(
-          'transition',
-          {
-            attrs: { name: 'fade' }
-          },
-          [dots]
-        )]
-      )]
-    );
+    return h('div', {
+      class: "vu-slider", style: { width: this.widthSlider }, on: { wheel: this.handleScroll }
+    }, [this.dots === 'top' && !this.dotsInside && dots, this.progress === 'top' && progress, content, this.progress === 'bottom' && progress, this.dots === 'bottom' && !this.dotsInside && dots]);
   }
 };
 
 var VueUniversalSlider = {};
 
 VueUniversalSlider.install = function (Vue) {
-  Vue.component("ui-slider", Component);
-  Vue.component("ui-slider-item", Component$3);
+  Vue.component("vu-slider", Slider);
+  Vue.component("vu-slider-item", SliderItem);
 };
 
-VueUniversalSlider.Slider = Component;
-VueUniversalSlider.SliderItem = Component$3;
+VueUniversalSlider.Slider = Slider;
+VueUniversalSlider.SliderItem = SliderItem;
 
 if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(VueUniversalSlider);

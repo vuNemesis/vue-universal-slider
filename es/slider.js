@@ -1,7 +1,5 @@
 import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 import './style.scss';
@@ -27,14 +25,13 @@ var Component = {
     buttonsOutside: Boolean,
     wheel: Boolean,
     dots: Boolean,
-    progressTop: Boolean,
-    progressBottom: Boolean
+    progress: String
   },
   data: function data() {
     return {
-      countElements: 0,
+      countItems: 0,
+      itemsData: [],
       elements: [],
-      itemsData: null,
       cols: 7,
       step: 1,
       left: 0,
@@ -50,6 +47,10 @@ var Component = {
     };
   },
   created: function created() {
+    console.log('created: ', this.$props);
+  },
+  mounted: function mounted() {
+    console.log('mounted');
     // if(this.$vnode.data.scopedSlots && this.$vnode.data.scopedSlots.default) console.dir(this.$vnode.data.scopedSlots.default({image: 'test'}))
     if (!this.items && this.$slots.default) {
       this.itemsData = this.$slots.default.filter(function (item) {
@@ -122,9 +123,20 @@ var Component = {
     }
   },
   computed: {
-    progressVisible: function progressVisible() {
-      return this.progressTop || this.progressBottom;
-    },
+    // itemsData() {
+    //     console.dir(this.items)
+
+    //   let data = []
+    //   if(!this.items && this.$slots.default) {
+    //     data = this.$slots.default.filter(item => {
+    //       return (item.componentOptions && item.componentOptions.tag === 'ui-slider-item')
+    //     }).map(item => item.componentOptions.propsData.item)
+    //   } else {
+    //     data = [...this.items.map(item => item)]
+    //   }
+    //   this.countItems = data.length
+    //   return data
+    // },
     progressPercent: function progressPercent() {
       return Math.round((this.sliderWidth + Math.abs(this.left)) * 100 / this.itemsWidth);
     },
@@ -168,6 +180,7 @@ var Component = {
     // const directives = [
     //   { name: 'my-dir', value: 123, modifiers: { abc: true } }
     // ]
+    console.log('OK');
     var items = void 0;
     var scopedFunc = this.$vnode.data.scopedSlots && this.$vnode.data.scopedSlots.default;
     items = this.itemsData.map(function (item, index) {
@@ -178,16 +191,15 @@ var Component = {
 
     var dots = !this.dots ? null : this.isLoading ? null : h(SliderDots, null);
 
-    var progress = !this.progressVisible ? null : this.isLoading ? null : h(
+    var progress = !this.progress ? null : this.isLoading ? null : h(
       'div',
-      _defineProperty({ 'class': 'slider-progress' }, 'class', ['slider-progress', this.progressTop && 'top', this.progressBottom && 'bottom']),
-      [h('div', _mergeJSXProps([{ 'class': 'slider-progress-bar' }, this.styleProgress]))]
+      { 'class': ['vu-slider__progress', 'vu-slider__progress_' + this.progress] },
+      [h('div', _mergeJSXProps([{ 'class': 'vu-slider__progress-bar' }, this.styleProgress]))]
     );
 
     var leftButton = h(
       'div',
-      _mergeJSXProps([_defineProperty({ 'class': 'slider-button'
-      }, 'class', ['slider-button', this.buttonsPosition === 'bottom' ? 'slider-button-bottom-left' : this.buttonsPosition === 'top' ? 'slider-button-top-left' : 'slider-button-left', !this.isLoading && this.visibleLeftButton && 'visible']), {
+      _mergeJSXProps([{ 'class': ['vu-slider__button', this.buttonsPosition === 'bottom' ? 'vu-slider__button_bottom-left' : this.buttonsPosition === 'top' ? 'vu-slider__button_top-left' : 'vu-slider__button_left', !this.isLoading && this.visibleLeftButton && 'vu-slider__button_visible'] }, {
         on: {
           'click': function click($event) {
             for (var _len = arguments.length, attrs = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -198,13 +210,25 @@ var Component = {
           }
         }
       }]),
-      ['\u2039']
+      [h(
+        'div',
+        { 'class': 'arrow left' },
+        [h(
+          'svg',
+          {
+            attrs: { width: '16px', height: '30px', viewBox: '0 0 16 30', xmlSpace: 'preserve' }
+          },
+          [h('polyline', {
+            attrs: { fill: 'none', stroke: '#FFFFFF', 'stroke-width': '1',
+              'stroke-linecap': 'round', 'stroke-linejoin': 'round', points: '16,30 0,15 16,0' }
+          })]
+        )]
+      )]
     );
 
     var rightButton = h(
       'div',
-      _mergeJSXProps([_defineProperty({ 'class': 'slider-button'
-      }, 'class', ['slider-button', this.buttonsPosition === 'bottom' ? 'slider-button-bottom-right' : this.buttonsPosition === 'top' ? 'slider-button-top-right' : 'slider-button-right', !this.isLoading && this.visibleRightButton && 'visible']), {
+      _mergeJSXProps([{ 'class': ['vu-slider__button', this.buttonsPosition === 'bottom' ? 'vu-slider__button_bottom-right' : this.buttonsPosition === 'top' ? 'vu-slider__button_top-right' : 'vu-slider__button_right', !this.isLoading && this.visibleRightButton && 'vu-slider__button_visible'] }, {
         on: {
           'click': function click($event) {
             for (var _len2 = arguments.length, attrs = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
@@ -215,7 +239,19 @@ var Component = {
           }
         }
       }]),
-      ['\u203A']
+      [h(
+        'div',
+        { 'class': 'arrow right' },
+        [h(
+          'svg',
+          {
+            attrs: { width: '16px', height: '30px', viewBox: '0 0 16 30', xmlSpace: 'preserve' }
+          },
+          [h('polyline', {
+            attrs: { fill: 'none', stroke: '#FFFFFF', 'stroke-width': '1', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', points: '0,30 16,15 0,0' }
+          })]
+        )]
+      )]
     );
 
     return h(
@@ -223,7 +259,7 @@ var Component = {
       null,
       [h(
         'div',
-        _mergeJSXProps([{ 'class': 'ui slider' }, this.styleSlider, {
+        _mergeJSXProps([{ 'class': 'vu-slider' }, this.styleSlider, {
           on: {
             'wheel': function wheel($event) {
               for (var _len3 = arguments.length, attrs = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
@@ -242,10 +278,10 @@ var Component = {
           [progress]
         ), leftButton, rightButton, h(
           'div',
-          { 'class': 'slider-content', ref: 'slider' },
+          { 'class': 'vu-slider__content', ref: 'slider' },
           [h(
             'div',
-            _mergeJSXProps([{ 'class': 'slider-items' }, this.styleContent]),
+            _mergeJSXProps([{ 'class': 'vu-slider__content-items' }, this.styleContent]),
             [items]
           )]
         ), h(

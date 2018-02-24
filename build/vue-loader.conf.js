@@ -10,7 +10,7 @@ var loaders = utils.cssLoaders({
   extract: isProduction
 })
 
-// loaders.example = require.resolve('./my_loaders/examples_loader.js')
+loaders.example = require.resolve('./code-loader.js')
 
 module.exports = {
   loaders,

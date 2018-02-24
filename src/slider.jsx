@@ -21,14 +21,13 @@ const Component = {
     buttonsOutside: Boolean,
     wheel: Boolean,
     dots: Boolean,
-    progressTop: Boolean,
-    progressBottom: Boolean
+    progress: String,
   },
   data() {
     return {
-      countElements: 0,
+      countItems: 0,
+      itemsData: [],
       elements: [],
-      itemsData: null,
       cols: 7,
       step: 1,
       left: 0,
@@ -44,6 +43,10 @@ const Component = {
     }
   },
   created() {
+    console.log('created: ', this.$props)
+  },
+  mounted() {
+    console.log('mounted')
     // if(this.$vnode.data.scopedSlots && this.$vnode.data.scopedSlots.default) console.dir(this.$vnode.data.scopedSlots.default({image: 'test'}))
     if(!this.items && this.$slots.default) {
       this.itemsData = this.$slots.default.filter(item => {
@@ -103,9 +106,20 @@ const Component = {
         }
   },
   computed: {
-    progressVisible() {
-      return this.progressTop || this.progressBottom
-    },
+    // itemsData() {
+    //     console.dir(this.items)
+      
+    //   let data = []
+    //   if(!this.items && this.$slots.default) {
+    //     data = this.$slots.default.filter(item => {
+    //       return (item.componentOptions && item.componentOptions.tag === 'ui-slider-item')
+    //     }).map(item => item.componentOptions.propsData.item)
+    //   } else {
+    //     data = [...this.items.map(item => item)]
+    //   }
+    //   this.countItems = data.length
+    //   return data
+    // },
     progressPercent() {
       return Math.round(((this.sliderWidth + Math.abs(this.left)) * 100) / this.itemsWidth)
     },
@@ -149,6 +163,7 @@ const Component = {
     // const directives = [
     //   { name: 'my-dir', value: 123, modifiers: { abc: true } }
     // ]
+    console.log('OK')
     let items
     const scopedFunc = this.$vnode.data.scopedSlots && this.$vnode.data.scopedSlots.default
     items = this.itemsData.map((item, index) => {
@@ -163,48 +178,64 @@ const Component = {
         ? null
         :  <SliderDots/>
 
-    const progress = !this.progressVisible 
+    const progress = !this.progress
       ? null 
       : this.isLoading 
         ? null
-        : <div class="slider-progress" class={[
-            'slider-progress',
-            this.progressTop && 'top',
-            this.progressBottom && 'bottom',
-          ]}><div class="slider-progress-bar" {...this.styleProgress}></div></div>
+        : <div class={[
+            'vu-slider__progress',
+            `vu-slider__progress_${this.progress}`
+          ]}><div class="vu-slider__progress-bar" {...this.styleProgress}></div></div>
 
-    const leftButton = <div class="slider-button" 
-      class={[
-        'slider-button',
+    const leftButton = <div class={[
+        'vu-slider__button',
         this.buttonsPosition === 'bottom' 
-          ? 'slider-button-bottom-left' 
+          ? 'vu-slider__button_bottom-left' 
           : this.buttonsPosition === 'top' 
-            ? 'slider-button-top-left'
-            : 'slider-button-left',
-        !this.isLoading && this.visibleLeftButton && 'visible'
-      ]} on-click={this.handleLeft}>&lsaquo;</div>
+            ? 'vu-slider__button_top-left'
+            : 'vu-slider__button_left',
+        !this.isLoading && this.visibleLeftButton && 'vu-slider__button_visible'
+      ]} on-click={this.handleLeft}>
+        <div class="arrow left">
+         {/* <svg width="60px" height="80px" viewBox="0 0 50 80" xmlSpace="preserve">
+            <polyline fill="none" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375"/>
+          </svg> */} 
+          <svg width="16px" height="30px" viewBox="0 0 16 30" xmlSpace="preserve">
+            <polyline fill="none" stroke="#FFFFFF" stroke-width="1" 
+            stroke-linecap="round" stroke-linejoin="round" points="16,30 0,15 16,0"/>
+          </svg>  
+        </div>
+      </div>
 
-    const rightButton = <div class="slider-button" 
-      class={[
-        'slider-button',
+    const rightButton = <div class={[
+        'vu-slider__button',
         this.buttonsPosition === 'bottom' 
-          ? 'slider-button-bottom-right' 
+          ? 'vu-slider__button_bottom-right' 
           : this.buttonsPosition === 'top' 
-            ? 'slider-button-top-right'
-            : 'slider-button-right',
-        !this.isLoading && this.visibleRightButton && 'visible'
-      ]} on-click={this.handleRight}>&rsaquo;</div>
+            ? 'vu-slider__button_top-right'
+            : 'vu-slider__button_right',
+        !this.isLoading && this.visibleRightButton && 'vu-slider__button_visible'
+      ]} on-click={this.handleRight}>
+        <div class="arrow right">
+         {/* <svg width="60px" height="80px" viewBox="0 0 50 80" xmlSpace="preserve">
+            <polyline fill="none" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375"/>
+          </svg> */} 
+          <svg width="16px" height="30px" viewBox="0 0 16 30" xmlSpace="preserve">
+            <polyline fill="none" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" points="0,30 16,15 0,0"/>
+          </svg>  
+        </div>
+      </div>
 
     return (
       <div> 
-        <div class="ui slider" {...this.styleSlider} onWheel={this.handleScroll}>
+        <div class="vu-slider" {...this.styleSlider} onWheel={this.handleScroll}>
           <transition name="fade">
             {progress}
             </transition>
             {leftButton}
             {rightButton}
-          <div class="slider-content" ref="slider" >
-              <div class="slider-items" {...this.styleContent}>
+          <div class="vu-slider__content" ref="slider" >
+              <div class="vu-slider__content-items" {...this.styleContent}>
                 {items}
               </div>
           </div>

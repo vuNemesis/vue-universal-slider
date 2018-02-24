@@ -26,20 +26,25 @@ module.exports = {
       'src': resolve('src')
     }
   },
+  // resolveLoader: {
+  //   alias: {
+  //     'code-loader': path.join(__dirname, 'build', 'code-loader.js')
+  //   }
+  // },
   module: {
     rules: [
       // {
       //   test: /_examples\.vue$/,
       //   // loader: 'raw-loader',
-      //   loader: require.resolve('./my_loaders/examples_loader.js'),
+      //   loader: require.resolve('./example_loader.js'),
       // },
       {
         test: /\.vue$/,
         exclude: /_examples\.vue$/,
         use: [
           // {
-            // loader: require.resolve('./my_loaders/examples_loader.js'),
-            // options: {}
+          //   loader: require.resolve('./inject-loader.js'),
+          //   options: {}
           // },
           {
             loader: 'vue-loader',

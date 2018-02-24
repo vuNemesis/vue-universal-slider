@@ -1,33 +1,17 @@
-import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
-var Component = {
+export default {
   name: 'ui-slider-dots',
-  inject: ['sliderRoot'],
-  data: function data() {
-    return {
-      slider: this.sliderRoot
-    };
+  functional: true,
+  inject: {
+    sliderRoot: { default: null }
   },
-  render: function render(h) {
+  render: function render(h, _ref) {
     var _this = this;
 
-    return h(
-      'div',
-      { 'class': 'slider-dots' },
-      [this.slider.elements.map(function (item, index) {
-        return item.offsetLeft + _this.slider.left + item.clientWidth / 3 >= 0 && item.offsetLeft + item.clientWidth - item.clientWidth / 3 <= _this.slider.sliderWidth + Math.abs(_this.slider.left) ? h('span', { 'class': 'dot red' }) : h('span', _mergeJSXProps([{ 'class': 'dot' }, {
-          on: {
-            'click': function click($event) {
-              for (var _len = arguments.length, attrs = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-                attrs[_key - 1] = arguments[_key];
-              }
+    var injections = _ref.injections;
+    var sliderRoot = injections.sliderRoot;
 
-              _this.slider.handleDot.bind(_this, index).apply(undefined, [$event].concat(attrs));
-            }
-          }
-        }]));
-      })]
-    );
+    return h('div', { class: 'vu-slider__dots', style: sliderRoot.styleDots }, [sliderRoot.elements.map(function (item, index) {
+      return item.offsetLeft + sliderRoot.left + item.clientWidth / 3 >= 0 && item.offsetLeft + item.clientWidth - item.clientWidth / 3 <= sliderRoot.sliderWidth + Math.abs(sliderRoot.left) ? h('span', { class: 'vu-slider__dot vu-slider__dot_active' }) : h('span', { class: 'vu-slider__dot', on: { click: sliderRoot.handleDot.bind(_this, index) } });
+    })]);
   }
 };
-
-export default Component;
